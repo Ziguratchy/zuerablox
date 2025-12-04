@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ZueraBlox Fórum — FrostBux</title>
+<style>
+/* ====== THEME FROSTBUX (UPDATED) ====== */
+:root{
+  --bg:#050505; --panel:#0E0E0E; --muted:#9aa; --accent:#4aa8ff; --danger:#ff4444; --glass: rgba(255,255,255,0.03);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#fff;font-family:Inter,Arial,Helvetica,sans-serif;overflow-y:auto}
+header{height:72px;background:#0A0A0A;border-bottom:1px solid #0f0f0f;display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:50}
+header .brand{display:flex;gap:12px;align-items:center}
+header h1{font-size:20px;color:var(--accent);margin:0;text-shadow:0 0 6px var(--accent)}
+.header-controls{display:flex;gap:8px;align-items:center}
+.btn{background:linear-gradient(135deg,#161616,#0f0f0f);border:1px solid #1f1f1f;padding:8px 12px;border-radius:10px;cursor:pointer;color:var(--accent)}
+.search{padding:8px;border-radius:10px;background:#0a0a0a;border:1px solid #1f1f1f;color:#fff;width:260px}
+.top-filters{display:flex;gap:8px;align-items:center}
+.container{display:grid;grid-template-columns:260px 1fr 320px;gap:18px;padding:22px}
+/* LEFT CATEGORIES */
+.sidebar{background:var(--panel);padding:14px;border-radius:12px;border:1px solid #111;box-shadow:0 6px 20px rgba(0,0,0,0.6)}
+.cat{padding:10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;cursor:pointer}
+.cat:hover{background:#111}
+.cat .title{display:flex;gap:8px;align-items:center}
+.cat .color{width:12px;height:12px;border-radius:3px}
+.subcats{margin-top:8px;padding-left:6px}
+.sub{font-size:13px;padding:6px;border-radius:6px;color:var(--muted);cursor:pointer}
+.sub:hover{background:#111}
+/* MAIN */
+.main{min-height:80vh}
+.toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tabs{display:flex;gap:8px}
+.tab{padding:8px 12px;border-radius:8px;background:transparent;border:1px solid transparent;cursor:pointer}
+.tab.active{background:#0b1420;border:1px solid rgba(74,168,255,0.12)}
+.topics{display:flex;flex-direction:column;gap:12px}
+.topic{display:flex;gap:12px;background:linear-gradient(180deg,#0e0e0e,#0b0b0b);padding:14px;border-radius:12px;border:1px solid #111;align-items:flex-start}
+.topic .meta{width:110px;flex-shrink:0;text-align:center}
+.topic .meta .count{font-weight:700;color:var(--accent)}
+.topic .content{flex:1}
+.topic .title{font-size:16px;color:#fff;display:flex;align-items:center;gap:8px}
+.topic .title .locked{color:var(--muted);font-size:14px}
+.topic .excerpt{color:var(--muted);font-size:13px;margin-top:6px}
+.topic:hover{box-shadow:0 8px 30px rgba(0,0,0,0.6);transform:translateY(-2px)}
+/* BLUE DOT */
+.unreadDot{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent);display:inline-block;margin-right:6px}
+/* RIGHT SIDEBAR */
+.right{background:var(--panel);padding:14px;border-radius:12px;border:1px solid #111}
+.recentItem{display:flex;gap:10px;align-items:center;padding:8px;border-radius:8px;cursor:pointer}
+.recentItem:hover{background:#111}
+.avatarSm{width:38px;height:38px;border-radius:6px;object-fit:cover;border:2px solid rgba(74,168,255,0.12)}
+/* TOPIC PAGE */
+.topicPage{background:linear-gradient(180deg,#0f0f0f,#0b0b0b);padding:16px;border-radius:12px;border:1px solid #111}
+.post{display:flex;gap:12px;padding:12px;border-radius:10px;background:var(--glass);border:1px solid rgba(255,255,255,0.02)}
+.post .avatar{width:68px;height:68px;border-radius:12px;object-fit:cover;border:2px solid #222}
+.post .body{flex:1}
+.post .nick{font-weight:700;color:var(--accent);font-size:15px}
+.post .meta{color:var(--muted);font-size:13px}
+.replies{margin-left:80px;margin-top:8px;display:flex;flex-direction:column;gap:8px}
+.reply{display:flex;gap:8px}
+.reactionBar{display:flex;gap:8px;margin-top:8px}
+.reactBtn{padding:6px 8px;border-radius:8px;background:#0a0a0a;border:1px solid #111;cursor:pointer}
+/* INPUTS */
+.inputRow{display:flex;gap:8px;margin-top:12px}
+.inputRow textarea{flex:1;height:80px;padding:10px;border-radius:10px;background:#060606;border:1px solid #111;color:#fff}
+/* ADMIN PANEL */
+.adminPanel{margin-top:12px;padding:12px;background:#100a0a;border-radius:8px;border:1px solid #2a1a1a}
+.adminPanel h3{color:var(--danger)}
+/* NOTIFICATIONS */
+.notifs{position:fixed;right:20px;bottom:20px;width:320px;max-height:60vh;overflow:auto;display:flex;flex-direction:column;gap:8px;z-index:60}
+.notif{background:#081022;padding:10px;border-radius:10px;border:1px solid rgba(74,168,255,0.08)}
+/* MOBILE */
+@media(max-width:980px){.container{grid-template-columns:1fr;padding:12px}.right{order:3}.sidebar{order:2}.top-filters .search{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <img src="https://i.imgur.com/b2pF1Kf.png" width="44" height="44" style="border-radius:8px;object-fit:cover;border:2px solid rgba(74,168,255,0.12)">
+    <h1>ZueraBlox Fórum</h1>
+    <div style="font-size:12px;color:var(--muted);margin-left:6px">FrostBux • DevForum style</div>
+  </div>
+  <div class="header-controls">
+    <div class="top-filters">
+      <input id="q" class="search" placeholder="Pesquisar tópicos...">
+      <select id="sort" class="btn" title="Ordenar">
+        <option value="recent">Recentes</option>
+        <option value="popular">Populares</option>
+        <option value="week">Esta semana</option>
+      </select>
+      <div class="btn" id="openSettings">⚙</div>
+    </div>
+  </div>
+</header>
+
+<div class="container">
+  <!-- LEFT CATEGORIES -->
+  <div class="sidebar">
+    <strong style="color:var(--accent)">Categorias</strong>
+    <div id="categories"></div>
+    <hr style="border:0;border-top:1px solid #0b0b0b;margin:12px 0">
+    <strong style="color:var(--accent)">Criar</strong>
+    <div style="margin-top:8px;display:flex;gap:8px">
+      <input id="newTopicTitle" placeholder="Título do tópico" style="flex:1;padding:8px;border-radius:8px;background:#060606;border:1px solid #111;color:#fff">
+      <button id="createTopic" class="btn">Novo</button>
+    </div>
+    <div style="margin-top:10px;font-size:13px;color:var(--muted)">Escolha categoria ao criar</div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="toolbar">
+      <div class="tabs" id="tabs"></div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="font-size:13px;color:var(--muted)" id="counterLabel">0 tópicos</div>
+      </div>
+    </div>
+
+    <div id="viewArea">
+      <!-- Home (topics list) -->
+      <div id="homeView">
+        <div class="topics" id="topicsList"></div>
+      </div>
+
+      <!-- Topic Page -->
+      <div id="topicView" style="display:none">
+        <div style="margin-bottom:10px"><button id="backBtn" class="btn">◀ Voltar</button></div>
+        <div id="topicContent"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- RIGHT: Recents + Preview -->
+  <aside class="right">
+    <strong style="color:var(--accent)">Tópicos recentes</strong>
+    <div id="recentList" style="margin-top:8px"></div>
+    <hr style="border:0;border-top:1px solid #0b0b0b;margin:12px 0">
+    <strong style="color:var(--accent)">Notificações</strong>
+    <div id="notifCount" style="color:var(--muted);margin-top:6px">0 novas</div>
+  </aside>
+</div>
+
+<!-- SETTINGS SIDEBAR (overlay) -->
+<div id="settings" style="position:fixed;top:72px;right:-420px;width:380px;height:calc(100% - 72px);background:rgba(5,5,5,0.95);backdrop-filter:blur(8px);padding:18px;border-left:1px solid #101010;box-shadow:-5px 0 35px rgba(0,0,0,0.6);transition:0.4s;z-index:80;border-radius:12px 0 0 12px;overflow:auto}">
+  <h2 style="color:var(--accent)">Configurações</h2>
+  <img id="avatarPreview" width="100" height="100" style="border-radius:50%;border:2px solid var(--accent);object-fit:cover;margin-bottom:8px">
+  <div>
+    <label style="display:block">Alterar Avatar:</label>
+    <input type="file" id="avatarInput"><br><br>
+    <label>Nickname:</label>
+    <input id="nickInput" style="width:100%;padding:8px;border-radius:8px;background:#060606;border:1px solid #111;color:#fff"><br><br>
+    <label>Username (@):</label>
+    <input id="userInput" style="width:100%;padding:8px;border-radius:8px;background:#060606;border:1px solid #111;color:#fff"><br><br>
+    <label>Nível:</label>
+    <select id="levelSelect" style="width:100%;padding:8px;border-radius:8px;background:#060606;border:1px solid #111;color:#fff">
+        <option>Bronze</option>
+        <option>Silver</option>
+        <option>Gold</option>
+        <option>Ultra</option>
+    </select>
+    <div id="adminPanel" style="display:none;margin-top:12px;padding:12px;background:#0f0f0f;border-radius:8px;border:1px solid #222">
+      <h3 style="color:var(--danger)">Painel ADMIN</h3>
+      <div style="display:flex;gap:8px">
+        <button id="resetDB" class="btn" style="background:#2a2a2a;color:#fff">Reset DB</button>
+        <button id="purgeNotifs" class="btn">Limpar Notifs</button>
+      </div>
+    </div>
+    <button id="saveBtn" style="margin-top:18px;width:100%;padding:12px;border-radius:10px;border:0;background:var(--accent);color:#000;font-weight:700">Salvar</button>
+  </div>
+</div>
+
+<!-- NOTIFICATIONS PANEL -->
+<div class="notifs" id="notifsPanel"></div>
+
+<script>
+/* =============== SIMPLE FORUM SYSTEM =============== */
+const DEFAULT_AVATAR = 'https://i.imgur.com/b2pF1Kf.png';
+let state = JSON.parse(localStorage.getItem('zf_state') || '{}');
+let userData = JSON.parse(localStorage.getItem('zf_user') || '{}');
+
+// initialize default data if empty
+function ensureDefaults(){
+  if(!state.categories){
+    state.categories = [
+      {id:'dev',title:'Desenvolvimento',color:'#4aa8ff',subs:[{id:'scripting',title:'Scripting'},{id:'ux',title:'UX'}]},
+      {id:'com',title:'Comunidade',color:'#ffd700',subs:[{id:'geral',title:'Geral'},{id:'off',title:'Off-topic'}]},
+      {id:'assets',title:'Recursos e Assets',color:'#8f00ff',subs:[{id:'models',title:'Modelos'},{id:'gui',title:'GUI'}]}
+    ];
+  }
+  if(!state.topics){
+    // seed with a few topics
+    state.topics = [
+      {id: idFor('t'),title:'Bem-vindo ao ZueraBlox!',cat:'com',sub:'geral',author:'Mod',authorHandle:'mod',avatar:DEFAULT_AVATAR,locked:false,unread:true,created:Date.now()-3600*1000*24*2,views:12,replies:2,weekCount:6,excerpt:'Apresentações e regras básicas do fórum.' ,posts:[{id:idFor('p'),author:'Mod',handle:'mod',avatar:DEFAULT_AVATAR,content:'Seja bem-vindo! Leia as regras.',created:Date.now()-3600*1000*24*2}]},
+      {id: idFor('t'),title:'Como fazer scripts de combate',cat:'dev',sub:'scripting',author:'ProCod',authorHandle:'procod',avatar:DEFAULT_AVATAR,locked:false,unread:false,created:Date.now()-3600*1000*8,views:58,replies:10,weekCount:58,excerpt:'Discussão sobre melhores práticas em combate.',posts:[{id:idFor('p'),author:'ProCod',handle:'procod',avatar:DEFAULT_AVATAR,content:'Comece com StateMachines...',created:Date.now()-3600*1000*8}]}
+    ];
+  }
+  if(!state.notifications) state.notifications = [];
+  localStorage.setItem('zf_state', JSON.stringify(state));
+}
+
+function idFor(prefix){return prefix+Math.random().toString(36).slice(2,9)}
+
+// user defaults
+if(!userData.avatar) userData.avatar = DEFAULT_AVATAR;
+if(!userData.nick) userData.nick = '';
+if(!userData.user) userData.user = '';
+if(!userData.level) userData.level = 'Bronze';
+
+ensureDefaults();
+
+/* ====== UI BINDINGS ====== */
+const categoriesEl = document.getElementById('categories');
+const topicsList = document.getElementById('topicsList');
+const recentList = document.getElementById('recentList');
+const notifCount = document.getElementById('notifCount');
+const notifsPanel = document.getElementById('notifsPanel');
+const counterLabel = document.getElementById('counterLabel');
+const tabs = document.getElementById('tabs');
+const viewArea = document.getElementById('viewArea');
+const homeView = document.getElementById('homeView');
+const topicView = document.getElementById('topicView');
+const topicContent = document.getElementById('topicContent');
+
+// settings
+const settingsPanel = document.getElementById('settings');
+const openSettingsBtn = document.getElementById('openSettings');
+const avatarPreview = document.getElementById('avatarPreview');
+const avatarInput = document.getElementById('avatarInput');
+const nickInput = document.getElementById('nickInput');
+const userInput = document.getElementById('userInput');
+const levelSelect = document.getElementById('levelSelect');
+const saveBtn = document.getElementById('saveBtn');
+const adminPanel = document.getElementById('adminPanel');
+const resetDB = document.getElementById('resetDB');
+const purgeNotifs = document.getElementById('purgeNotifs');
+
+// create topic
+const newTopicTitle = document.getElementById('newTopicTitle');
+const createTopicBtn = document.getElementById('createTopic');
+
+// search / sort
+const q = document.getElementById('q');
+const sort = document.getElementById('sort');
+
+// routing
+let currentTopicId = null;
+
+/* ====== RENDERING ====== */
+function renderCategories(){
+  categoriesEl.innerHTML = '';
+  state.categories.forEach(cat=>{
+    const el = document.createElement('div'); el.className='cat';
+    el.innerHTML = `<div class='title'><span class='color' style='background:${cat.color}'></span><div>${cat.title}</div></div><div style='color:var(--muted)'>${cat.subs.length}</div>`;
+    el.onclick = ()=>{openCategory(cat.id)};
+    categoriesEl.appendChild(el);
+    const subs = document.createElement('div'); subs.className='subcats';
+    cat.subs.forEach(s=>{const sub = document.createElement('div'); sub.className='sub'; sub.innerText=s.title; sub.onclick=(e)=>{e.stopPropagation(); openSub(cat.id,s.id)}; subs.appendChild(sub)});
+    categoriesEl.appendChild(subs);
+  });
+}
+
+function renderTabs(){
+  tabs.innerHTML='';
+  ['Todas','Recentes','Populares'].forEach((t,i)=>{const b=document.createElement('div');b.className='tab';b.innerText=t;b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');applyFilters()};if(i===0)b.classList.add('active');tabs.appendChild(b)})
+}
+
+function renderTopics(list){
+  topicsList.innerHTML='';
+  counterLabel.innerText = list.length + ' tópicos';
+  list.forEach(top=>{
+    const el = document.createElement('div'); el.className='topic';
+    const cat = state.categories.find(c=>c.id===top.cat) || {color:'#666'};
+    el.innerHTML = `
+      <div class='meta'>
+        <div style='font-size:13px;color:var(--muted)'>${new Date(top.created).toLocaleDateString()}</div>
+        <div class='count'>${top.replies||0}</div>
+        <div style='font-size:12px;color:var(--muted)'>views ${top.views||0}</div>
+      </div>
+      <div class='content'>
+        <div class='title'>${top.unread?'<span class="unreadDot"></span>':''}<span class='topicTitle'>${top.title}</span> ${top.locked?'<span class="locked">🔒</span>':''} <span style="margin-left:8px;padding:2px 6px;border-radius:6px;background:${cat.color};color:#000;font-weight:700;font-size:12px">${cat.title}</span></div>
+        <div class='excerpt'>${top.excerpt||''}</div>
+      </div>
+    `;
+    el.onclick = ()=>{openTopic(top.id)};
+    topicsList.appendChild(el);
+  })
+}
+
+function renderRecent(){
+  recentList.innerHTML='';
+  const recent = [...state.topics].sort((a,b)=>b.created-a.created).slice(0,6);
+  recent.forEach(t=>{
+    const r = document.createElement('div'); r.className='recentItem';
+    r.innerHTML = `<img src='${t.avatar||DEFAULT_AVATAR}' class='avatarSm'><div style='flex:1'><div style='font-weight:700'>${t.title}</div><div style='color:var(--muted);font-size:13px'>${t.author} • ${new Date(t.created).toLocaleDateString()}</div></div>`;
+    r.onclick = ()=>openTopic(t.id);
+    recentList.appendChild(r);
+  })
+}
+
+function renderNotifs(){
+  notifCount.innerText = state.notifications.filter(n=>!n.read).length + ' novas';
+  notifsPanel.innerHTML = '';
+  state.notifications.slice().reverse().forEach(n=>{
+    const el = document.createElement('div'); el.className='notif'; el.innerHTML = `<div style='font-weight:700'>${n.title}</div><div style='color:var(--muted);font-size:13px'>${n.text}</div>`;
+    notifsPanel.appendChild(el);
+  })
+}
+
+/* ====== APPLY FILTERS ====== */
+function applyFilters(){
+  let list = [...state.topics];
+  const qv = q.value.trim().toLowerCase();
+  if(qv) list = list.filter(t=>t.title.toLowerCase().includes(qv) || (t.excerpt||'').toLowerCase().includes(qv));
+  const s = sort.value;
+  if(s==='popular') list.sort((a,b)=>(b.replies||0)-(a.replies||0));
+  else list.sort((a,b)=>b.created-a.created);
+  renderTopics(list);
+  renderRecent();
+}
+
+/* ====== TOPIC VIEW ====== */
+function openTopic(id){
+  currentTopicId = id;
+  const top = state.topics.find(t=>t.id===id);
+  if(!top) return;
+  // mark as read
+  top.unread = false;
+  saveState();
+  homeView.style.display='none'; topicView.style.display='block';
+  topicContent.innerHTML = '';
+  const wrapper = document.createElement('div'); wrapper.className='topicPage';
+  wrapper.innerHTML = `<h2 style='margin:0'>${top.title} ${top.locked?'<span style="color:var(--muted);font-size:14px">🔒 Tópico trancado</span>':''}</h2><div style='color:var(--muted);margin-top:6px'>Por ${top.author} • ${new Date(top.created).toLocaleString()}</div><hr style='border:0;border-top:1px solid #0b0b0b;margin:12px 0'>`;
+
+  // posts
+  top.posts.forEach(p=>{
+    const post = document.createElement('div'); post.className='post';
+    post.innerHTML = `<img src='${p.avatar||DEFAULT_AVATAR}' class='avatar' style='width:68px;height:68px;border-radius:12px'><div class='body'><div class='nick'>${p.author} <span style='color:var(--muted);font-weight:400'>@${p.handle}</span></div><div class='meta'>${new Date(p.created).toLocaleString()}</div><div style='margin-top:8px'>${escapeHtml(p.content)}</div><div class='reactionBar'></div></div>`;
+    wrapper.appendChild(post);
+    // reaction bar
+    const reactionBar = post.querySelector('.reactionBar');
+    ['👍','🔥','😂'].forEach(r=>{const b=document.createElement('button');b.className='reactBtn';b.innerText=r+' 0';b.onclick=(e)=>{e.stopPropagation();reactToPost(top.id,p.id,r,b)};reactionBar.appendChild(b)});
+    // replies placeholder
+    const repls = document.createElement('div'); repls.className='replies';
+    if(p.replies) p.replies.forEach(rp=>{const rr=document.createElement('div'); rr.className='reply'; rr.innerHTML=`<img src='${rp.avatar||DEFAULT_AVATAR}' style='width:40px;height:40px;border-radius:8px'><div style="background:#070707;padding:8px;border-radius:8px"><div style='font-weight:700;color:var(--accent)'>${rp.author} <span style='color:var(--muted);font-weight:400'>@${rp.handle}</span></div><div style='color:var(--muted);font-size:13px'>${new Date(rp.created).toLocaleString()}</div><div style='margin-top:6px'>${escapeHtml(rp.content)}</div></div>`; repls.appendChild(rr)});
+    wrapper.appendChild(repls);
+  });
+
+  // reply box
+  const inputRow = document.createElement('div'); inputRow.className='inputRow';
+  inputRow.innerHTML = `<textarea id='replyText' placeholder='Responder...'></textarea><div style='display:flex;flex-direction:column;gap:8px'><button id='sendReply' class='btn'>Responder</button><button id='toggleLock' class='btn'>${top.locked?'Destrancar':'Trancar'}</button></div>`;
+  wrapper.appendChild(inputRow);
+
+  topicContent.appendChild(wrapper);
+
+  document.getElementById('backBtn').onclick = ()=>{topicView.style.display='none';homeView.style.display='block';currentTopicId=null;applyFilters()}
+  document.getElementById('sendReply').onclick = ()=>{const v=document.getElementById('replyText').value.trim(); if(!v) return alert('Escreva algo'); if(top.locked) return alert('Tópico trancado'); const post={id:idFor('p'),author:userData.nick||'Jogador',handle:userData.user||'user000',avatar:userData.avatar,content:v,created:Date.now()}; top.posts.push(post); top.replies = (top.replies||0)+1; addNotif('Novo reply', `${post.author} respondeu em ${top.title}`); saveState(); openTopic(top.id)};
+  document.getElementById('toggleLock').onclick = ()=>{if(!isAdmin()) return alert('Somente admin'); top.locked = !top.locked; saveState(); openTopic(top.id)};
+}
+
+function reactToPost(topicId,postId,reaction,btn){
+  const top = state.topics.find(t=>t.id===topicId);
+  if(!top) return; const p = top.posts.find(x=>x.id===postId);
+  if(!p) return;
+  p.reactions = p.reactions || {};
+  p.reactions[reaction] = (p.reactions[reaction]||0)+1;
+  btn.innerText = reaction + ' ' + p.reactions[reaction];
+  saveState();
+}
+
+/* ===== CREATE TOPIC ===== */
+createTopicBtn.onclick = ()=>{
+  const title = newTopicTitle.value.trim(); if(!title) return alert('Defina um título');
+  // choose first category/sub by default (user should pick in UI improvement)
+  const cat = state.categories[0]; const sub = cat.subs[0];
+  const t = {id:idFor('t'),title,cat:cat.id,sub:sub.id,author:userData.nick||'Jogador',authorHandle:userData.user||'user000',avatar:userData.avatar,locked:false,unread:true,created:Date.now(),views:0,replies:0,weekCount:0,excerpt:'',posts:[{id:idFor('p'),author:userData.nick||'Jogador',handle:userData.user||'user000',avatar:userData.avatar,content:'Tópico criado',created:Date.now()}]};
+  state.topics.unshift(t); saveState(); newTopicTitle.value=''; applyFilters(); addNotif('Novo tópico', `${t.author} criou ${t.title}`);
+}
+
+/* ===== SETTINGS LOGIC ===== */
+openSettingsBtn.onclick = ()=>{settingsPanel.style.right = settingsPanel.style.right === '0px' ? '-420px' : '0px'; renderSettings();}
+function renderSettings(){avatarPreview.src = userData.avatar || DEFAULT_AVATAR; nickInput.value = userData.nick || ''; userInput.value = userData.user || ''; levelSelect.value = userData.level || 'Bronze'; adminPanel.style.display = (userData.user==='admin')? 'block':'none';}
+
+saveBtn.onclick = ()=>{
+  userData.nick = nickInput.value; userData.user = userInput.value; userData.level = levelSelect.value; localStorage.setItem('zf_user', JSON.stringify(userData)); renderSettings(); alert('Dados salvos!');}
+
+avatarInput.onchange = (e)=>{const file=e.target.files[0]; if(!file) return; const reader=new FileReader(); reader.onload=()=>{userData.avatar = reader.result; localStorage.setItem('zf_user', JSON.stringify(userData)); avatarPreview.src = userData.avatar; applyAvatarToUser();}; reader.readAsDataURL(file)}
+
+function applyAvatarToUser(){ // replace existing occurrences where handle matches
+  state.topics.forEach(t=>{ if(t.authorHandle === userData.user) t.avatar = userData.avatar; t.posts.forEach(p=>{ if(p.handle===userData.user) p.avatar = userData.avatar }) }); saveState();}
+
+/* ===== NOTIFICATIONS ===== */
+function addNotif(title,text){ state.notifications = state.notifications || []; state.notifications.push({id:idFor('n'),title,text,read:false,ts:Date.now()}); saveState(); renderNotifs(); showToast(title,text); }
+function showToast(title,text){ const el=document.createElement('div'); el.className='notif'; el.innerHTML=`<div style='font-weight:700'>${title}</div><div style='color:var(--muted);font-size:13px'>${text}</div>`; notifsPanel.appendChild(el); setTimeout(()=>el.remove(),7000); }
+
+/* ===== ADMIN ACTIONS ===== */
+resetDB.onclick = ()=>{if(!isAdmin()) return alert('Somente admin'); if(confirm('Resetar banco de dados?')){localStorage.removeItem('zf_state'); state={}; ensureDefaults(); applyFilters(); renderCategories();renderTabs();renderNotifs();alert('Reset completo')}}
+purgeNotifs.onclick = ()=>{state.notifications = []; saveState(); renderNotifs();}
+
+function isAdmin(){return userData.user==='admin'}
+
+/* ===== UTILITIES ===== */
+function saveState(){localStorage.setItem('zf_state', JSON.stringify(state));}
+function escapeHtml(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}
+
+/* ===== INITIAL RENDER ===== */
+renderCategories(); renderTabs(); applyFilters(); renderNotifs(); renderSettings();
+
+// wire search/sort
+q.oninput = applyFilters; sort.onchange = applyFilters;
+// back button in topic is wired in openTopic
+
+// load from hash to open topic
+window.onhashchange = ()=>{const id = location.hash.replace('#',''); if(id.startsWith('t_')) openTopic(id)}
+
+// simple polling for weekly counters (demo)
+setInterval(()=>{
+  // simulate week counts
+  state.topics.forEach(t=>{ t.weekCount = (t.replies||0) }); saveState();}, 60*1000);
+
+// expose few helpers for UI dev
+window.__zf = {state, userData, addNotif, openTopic};
+
+
+// === XP & LEVEL SYSTEM ===
+// Add XP on actions: posting, replying, reacting
+let xpData = JSON.parse(localStorage.getItem("zf_xp") || "{ xp:0, level:1 }");
+
+function addXP(amount){
+    xpData.xp += amount;
+    let needed = xpData.level * 100; // XP needed per level
+    while(xpData.xp >= needed){
+        xpData.xp -= needed;
+        xpData.level++;
+        needed = xpData.level * 100;
+        createNotification(`🎉 Você subiu para o nível ${xpData.level}!`);
+    }
+    localStorage.setItem("zf_xp", JSON.stringify(xpData));
+}
+
+// Hook posting action (existing send message / create topic / reply)
+window.addEventListener("zf_post_created",()=>addXP(10));
+window.addEventListener("zf_reply_created",()=>addXP(5));
+window.addEventListener("zf_reaction_added",()=>addXP(2));
+
+// Display XP on profile in settings
+const xpBox = document.createElement("div");
+xpBox.style.marginTop = "10px";
+xpBox.style.color = "#4aa8ff";
+xpBox.style.fontWeight = "bold";
+xpBox.id = "xpInfo";
+document.getElementById("settings").appendChild(xpBox);
+
+function renderXP(){
+    let needed = xpData.level * 100;
+    xpBox.innerHTML = `XP: ${xpData.xp}/${needed} • Nível: ${xpData.level}`;
+}
+renderXP();
+
+// Re-render on interval
+setInterval(renderXP, 1000);
+
+
+
+// === PROFILE POPUP SYSTEM ===
+const profilePopup = document.getElementById("profilePopup");
+const pAvatar = document.getElementById("pAvatar");
+const pNick = document.getElementById("pNick");
+const pUser = document.getElementById("pUser");
+const pLevel = document.getElementById("pLevel");
+const pXP = document.getElementById("pXP");
+const pRecent = document.getElementById("pRecent");
+
+document.getElementById("closeProfile").onclick = ()=>{
+    profilePopup.style.display = "none";
+};
+
+function openProfile(data){
+    pAvatar.src = data.avatar;
+    pNick.innerText = data.nick;
+    pUser.innerText = "@" + data.user;
+    
+    if(data.xpData){
+        const needed = data.xpData.level * 100;
+        pLevel.innerText = "Nível: " + data.xpData.level;
+        pXP.innerText = `XP: ${data.xpData.xp}/${needed}`;
+    } else {
+        pLevel.innerText = "";
+        pXP.innerText = "";
+    }
+
+    pRecent.innerHTML = "";
+    if(data.recent){
+        data.recent.slice(-10).reverse().forEach(r=>{
+            const li = document.createElement("li");
+            li.innerText = r;
+            pRecent.appendChild(li);
+        });
+    }
+
+    profilePopup.style.display = "flex";
+}
+
+// click on message -> open profile
+messages.addEventListener("click", e=>{
+    let card = e.target.closest('.msg');
+    if(!card) return;
+
+    let nick = card.querySelector('.nick').innerText;
+    let user = card.querySelector('.user').innerText.replace('@','');
+    let avatar = card.querySelector('img').src;
+
+    let storedXP = JSON.parse(localStorage.getItem("zf_xp") || "{ xp:0, level:1 }");
+
+    openProfile({
+        nick, user, avatar,
+        xpData: storedXP,
+        recent: JSON.parse(localStorage.getItem("zf_actions") || "[]")
+    });
+});
+
+// log actions
+function logAction(text){
+    let arr = JSON.parse(localStorage.getItem("zf_actions") || "[]");
+    arr.push(text);
+    localStorage.setItem("zf_actions", JSON.stringify(arr));
+}
+
+window.addEventListener("zf_post_created", ()=> logAction("Criou um post"));
+window.addEventListener("zf_reply_created",()=> logAction("Enviou uma resposta"));
+window.addEventListener("zf_reaction_added",()=> logAction("Reagiu a uma mensagem"));
+
+</script>
+
+<!-- === PROFILE POPUP === -->
+<div id="profilePopup" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.65); backdrop-filter:blur(5px); display:none; align-items:center; justify-content:center; z-index:9999;">
+  <div id="profileCard" style="width:380px; background:#0c0c0c; border:1px solid #1a1a1a; border-radius:14px; padding:25px; box-shadow:0 0 20px rgba(0,0,0,0.6);">
+      <button id="closeProfile" style="float:right; background:none; border:0; color:white; font-size:20px; cursor:pointer;">✖</button>
+      <img id="pAvatar" style="width:110px; height:110px; border-radius:50%; border:3px solid #4aa8ff; box-shadow:0 0 12px #4aa8ff; object-fit:cover;">
+      <h2 id="pNick" style="margin:10px 0 0 0; color:#4aa8ff; text-shadow:0 0 6px #4aa8ff;"></h2>
+      <div id="pUser" style="opacity:0.8; margin-bottom:15px;"></div>
+      <div id="pLevel" style="font-weight:bold; color:#4aa8ff; margin-bottom:10px;"></div>
+      <div id="pXP" style="margin-bottom:20px;">XP: --</div>
+      <hr style="border-color:#222; margin:15px 0;">
+      <div style="opacity:0.8;">Interações recentes:</div>
+      <ul id="pRecent" style="max-height:150px; overflow-y:auto; margin-top:8px; padding-left:18px;"></ul>
+  </div>
+</div>
+
+</body>
+</html>
